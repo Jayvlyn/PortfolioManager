@@ -24,16 +24,16 @@ export const aboutContent: AboutContent = {
     "Visual Studio",
     "Leadership",
     "Game Design",
-    "Software Design",
-    ""
+    "Software Design"
   ],
   "whatDrivesMe": "Test",
   "leftImages": [
     "/images/left-image-1748197134793.jpg",
-    "/images/left-image-1748197551704.jpg"
+    "/images/left-image-1748198349109.jpg",
+    "/images/left-image-1748197976655.png"
   ],
   "rightImages": [
     "/images/right-image-1748195902718.jpg",
-    "/images/right-image-1748197134954.png"
+    "/images/right-image-1748198113120.jpg"
   ]
 };
