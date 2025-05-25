@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as fs from 'fs';
+import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
 export async function POST(request: NextRequest) {
@@ -10,26 +10,54 @@ export async function POST(request: NextRequest) {
     
     if (!file || !name) {
       return NextResponse.json(
-        { error: 'File and name are required' },
+        { error: 'Missing file or name' },
         { status: 400 }
       );
     }
 
-    // Convert File to Buffer
+    // Convert the file to a buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Ensure thumbnails directory exists in PortfolioWebsite
-    const thumbnailsDir = path.join(process.cwd(), '..', 'PortfolioWebsite', 'public', 'thumbnails');
-    if (!fs.existsSync(thumbnailsDir)) {
-      fs.mkdirSync(thumbnailsDir, { recursive: true });
+    // Get the file extension
+    const extension = file.name.split('.').pop();
+    
+    // Map the names to what the website expects
+    const fileNameMap: { [key: string]: string } = {
+      'about-left': 'left-image',
+      'about-right': 'right-image'
+    };
+    
+    const fileName = `${fileNameMap[name] || name}.${extension}`;
+
+    // Define paths
+    const managerImagesDir = path.join(process.cwd(), 'public', 'images');
+    const websiteImagesDir = 'C:\\PORTFOLIO_WEB\\PortfolioWebsite\\public\\images';
+    const managerPath = path.join(managerImagesDir, fileName);
+    const websitePath = path.join(websiteImagesDir, fileName);
+
+    try {
+      // Create directories if they don't exist
+      await mkdir(managerImagesDir, { recursive: true });
+      await mkdir(websiteImagesDir, { recursive: true });
+
+      // Write to manager location
+      await writeFile(managerPath, buffer);
+      
+      // Write to website location
+      await writeFile(websitePath, buffer);
+
+      return NextResponse.json({ 
+        message: 'File uploaded successfully',
+        path: `/images/${fileName}`
+      });
+    } catch (writeError) {
+      console.error('Error writing files:', writeError);
+      return NextResponse.json(
+        { error: 'Failed to write files' },
+        { status: 500 }
+      );
     }
-
-    // Save file
-    const filePath = path.join(thumbnailsDir, `${name}.jpg`);
-    fs.writeFileSync(filePath, buffer);
-
-    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(

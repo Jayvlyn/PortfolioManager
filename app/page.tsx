@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import Background3D from './components/Background3D';
+import Link from 'next/link';
 
 interface ProjectLink {
   type: 'github' | 'itch';
@@ -297,6 +298,14 @@ export default function PortfolioManager() {
               </div>
             </form>
           </div>
+
+          {/* About Section */}
+          <Link href="/about" className="block">
+            <div className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors">
+              <h2 className="text-2xl font-semibold mb-4">About Content</h2>
+              <p className="text-gray-300">Edit your introduction, background, skills, and what drives you.</p>
+            </div>
+          </Link>
         </div>
       </main>
     </>
