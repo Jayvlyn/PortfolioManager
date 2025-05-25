@@ -5,4 +5,11 @@ export interface AboutContent {
   whatDrivesMe: string;
   leftImages: string[];
   rightImages: string[];
+}
+
+export interface SocialLinks {
+  github: string;
+  itch: string;
+  linktree: string;
+  linkedin: string;
 } 

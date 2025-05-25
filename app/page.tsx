@@ -173,7 +173,7 @@ export default function PortfolioManager() {
           </div>
 
           {/* Add/Edit Project Form */}
-          <div id="project-form" className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 border border-white/10 shadow-xl">
+          <div id="project-form" className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 border border-white/10 shadow-xl mb-12">
             <h2 className="text-3xl font-semibold mb-6 text-white/90">
               {editingProject ? `Edit "${editingProject.name}"` : 'Add New Project'}
             </h2>
@@ -299,13 +299,24 @@ export default function PortfolioManager() {
             </form>
           </div>
 
-          {/* About Section */}
-          <Link href="/about" className="block">
-            <div className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors">
-              <h2 className="text-2xl font-semibold mb-4">About Content</h2>
-              <p className="text-gray-300">Edit your introduction, background, skills, and what drives you.</p>
-            </div>
-          </Link>
+          {/* Content Management Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link 
+              href="/about"
+              className="p-6 bg-[#222222] rounded-lg hover:bg-[#2a2a2a] transition-colors"
+            >
+              <h2 className="text-2xl font-semibold mb-2">Edit About Page</h2>
+              <p className="text-gray-400">Update your introduction, background, skills, and images</p>
+            </Link>
+
+            <Link 
+              href="/social"
+              className="p-6 bg-[#222222] rounded-lg hover:bg-[#2a2a2a] transition-colors"
+            >
+              <h2 className="text-2xl font-semibold mb-2">Edit Social Links</h2>
+              <p className="text-gray-400">Manage your social media and contact links</p>
+            </Link>
+          </div>
         </div>
       </main>
     </>
