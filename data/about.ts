@@ -1,8 +1,8 @@
 import { AboutContent } from './types';
 
 export const aboutContent: AboutContent = {
-  "introduction": "I'm a passionate developer with a keen eye for creating engaging and intuitive user experiences. My journey in software development began with a curiosity about how things work, which evolved into a deep love for building and creating.",
-  "background": "With a background in both front-end and back-end development, I bring a comprehensive approach to every project. I specialize in creating responsive, performant web applications that not only look great but also provide seamless user experiences.",
+  "introduction": "As a dedicated game developer and software engineer, I've transformed my childhood curiosity into a professional passion for creating innovative solutions and immersive gaming experiences. My journey in technology has been driven by an insatiable desire to build and solve complex challenges.",
+  "background": "My journey in software development began during my high school years, where I discovered my natural aptitude for programming and problem-solving. This early start has cultivated a strong foundation in technical skills and a continuous drive for learning and professional growth.",
   "skills": [
     "Version Control (Git)",
     "Unity",
