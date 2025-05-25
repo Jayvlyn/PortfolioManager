@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const fileName = `${safeName}.png`;
 
     // Define paths
-    const websiteThumbnailsDir = 'C:\\PORTFOLIO_WEB\\PortfolioWebsite\\public\\thumbnails';
+    const websiteThumbnailsDir = path.join(process.cwd(), '..', 'PortfolioWebsite', 'public', 'thumbnails');
     const websitePath = path.join(websiteThumbnailsDir, fileName);
 
     console.log('Upload request received:', { name, fileName, websitePath });
