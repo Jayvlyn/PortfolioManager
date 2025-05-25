@@ -29,8 +29,8 @@ export const aboutContent: AboutContent = {
   ],
   "whatDrivesMe": "Test",
   "leftImages": [
-    "/images/left-image-1748195902685.jpg",
-    "/images/left-image-1748197134793.jpg"
+    "/images/left-image-1748197134793.jpg",
+    "/images/left-image-1748197551704.jpg"
   ],
   "rightImages": [
     "/images/right-image-1748195902718.jpg",

@@ -10,6 +10,7 @@ export default function AboutPage() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [leftImage, setLeftImage] = useState<File | null>(null);
   const [rightImage, setRightImage] = useState<File | null>(null);
+  const [draggedImage, setDraggedImage] = useState<{ side: 'left' | 'right', index: number } | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -107,6 +108,18 @@ export default function AboutPage() {
     }));
   };
 
+  const moveImage = (side: 'left' | 'right', fromIndex: number, toIndex: number) => {
+    setContent(prev => {
+      const images = [...prev[side === 'left' ? 'leftImages' : 'rightImages']];
+      const [movedImage] = images.splice(fromIndex, 1);
+      images.splice(toIndex, 0, movedImage);
+      return {
+        ...prev,
+        [side === 'left' ? 'leftImages' : 'rightImages']: images
+      };
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-8">Edit About Content</h1>
@@ -129,8 +142,30 @@ export default function AboutPage() {
             </label>
             <div className="space-y-4">
               {content.leftImages.map((image, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <img src={image} alt={`Left image ${index + 1}`} className="w-20 h-20 object-cover rounded" />
+                <div key={index} className="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg">
+                  <div className="flex flex-col gap-1">
+                    <button
+                      type="button"
+                      onClick={() => moveImage('left', index, Math.max(0, index - 1))}
+                      disabled={index === 0}
+                      className="text-gray-400 hover:text-white disabled:opacity-30"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveImage('left', index, Math.min(content.leftImages.length - 1, index + 1))}
+                      disabled={index === content.leftImages.length - 1}
+                      className="text-gray-400 hover:text-white disabled:opacity-30"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                  <img 
+                    src={image} 
+                    alt={`Left image ${index + 1}`} 
+                    className="w-20 h-20 object-cover rounded" 
+                  />
                   <button
                     type="button"
                     onClick={() => removeImage('left', index)}
@@ -156,8 +191,30 @@ export default function AboutPage() {
             </label>
             <div className="space-y-4">
               {content.rightImages.map((image, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <img src={image} alt={`Right image ${index + 1}`} className="w-20 h-20 object-cover rounded" />
+                <div key={index} className="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg">
+                  <div className="flex flex-col gap-1">
+                    <button
+                      type="button"
+                      onClick={() => moveImage('right', index, Math.max(0, index - 1))}
+                      disabled={index === 0}
+                      className="text-gray-400 hover:text-white disabled:opacity-30"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveImage('right', index, Math.min(content.rightImages.length - 1, index + 1))}
+                      disabled={index === content.rightImages.length - 1}
+                      className="text-gray-400 hover:text-white disabled:opacity-30"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                  <img 
+                    src={image} 
+                    alt={`Right image ${index + 1}`} 
+                    className="w-20 h-20 object-cover rounded" 
+                  />
                   <button
                     type="button"
                     onClick={() => removeImage('right', index)}
