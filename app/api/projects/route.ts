@@ -62,12 +62,12 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    const { name, description, github, itch } = data;
+    const { name, description, github, itch, thumbnail } = data;
 
     // Validate required fields
-    if (!name || !description || !github) {
+    if (!name || !description) {
       return NextResponse.json(
-        { error: 'Name, description, and GitHub URL are required' },
+        { error: 'Name and description are required' },
         { status: 400 }
       );
     }
@@ -84,14 +84,15 @@ export async function POST(request: Request) {
     }
 
     // Create new project
+    const safeName = name.toLowerCase().replace(/\s+/g, '-');
+    const links: ProjectLink[] = [];
+    if (github) links.push({ type: 'github', url: github });
+    if (itch) links.push({ type: 'itch', url: itch });
     const newProject: Project = {
       name,
       description,
-      thumbnail: `/thumbnails/${name}.jpg`, // Assuming thumbnail was uploaded with project name
-      links: [
-        { type: 'github' as const, url: github },
-        ...(itch ? [{ type: 'itch' as const, url: itch }] : [])
-      ]
+      thumbnail: `/thumbnails/${safeName}.png`,
+      links
     };
 
     // Add to projects and save
@@ -108,7 +109,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const data = await request.json();
-    const { id, name, description, github, itch } = data;
+    const { id, name, description, github, itch, thumbnail } = data;
 
     // Validate required fields
     if (!id || (!name && !description && !github && !itch)) {
@@ -133,6 +134,7 @@ export async function PUT(request: Request) {
       ...project,
       name: name || project.name,
       description: description || project.description,
+      thumbnail: `/thumbnails/${(name || project.name).toLowerCase().replace(/\s+/g, '-')}.png`,
       links: [
         { 
           type: 'github' as const, 

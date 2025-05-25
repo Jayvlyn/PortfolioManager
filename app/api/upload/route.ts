@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     // Get the file extension
-    const extension = file.name.split('.').pop();
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
     
     // Map the names to what the website expects
     const fileNameMap: { [key: string]: string } = {
@@ -28,28 +28,26 @@ export async function POST(request: NextRequest) {
       'about-right': 'right-image'
     };
     
-    const fileName = `${fileNameMap[name] || name}.${extension}`;
+    const safeName = (fileNameMap[name] || name).toLowerCase().replace(/\s+/g, '-');
+    const fileName = `${safeName}.png`;
 
     // Define paths
-    const managerImagesDir = path.join(process.cwd(), 'public', 'images');
-    const websiteImagesDir = 'C:\\PORTFOLIO_WEB\\PortfolioWebsite\\public\\images';
-    const managerPath = path.join(managerImagesDir, fileName);
-    const websitePath = path.join(websiteImagesDir, fileName);
+    const websiteThumbnailsDir = 'C:\\PORTFOLIO_WEB\\PortfolioWebsite\\public\\thumbnails';
+    const websitePath = path.join(websiteThumbnailsDir, fileName);
+
+    console.log('Upload request received:', { name, fileName, websitePath });
 
     try {
-      // Create directories if they don't exist
-      await mkdir(managerImagesDir, { recursive: true });
-      await mkdir(websiteImagesDir, { recursive: true });
+      // Create the website thumbnails directory if it doesn't exist
+      await mkdir(websiteThumbnailsDir, { recursive: true });
 
-      // Write to manager location
-      await writeFile(managerPath, buffer);
-      
       // Write to website location
       await writeFile(websitePath, buffer);
+      console.log('File written to website location:', websitePath);
 
       return NextResponse.json({ 
         message: 'File uploaded successfully',
-        path: `/images/${fileName}`
+        path: `/thumbnails/${fileName}`
       });
     } catch (writeError) {
       console.error('Error writing files:', writeError);

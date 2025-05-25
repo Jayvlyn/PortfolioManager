@@ -51,6 +51,9 @@ export default function PortfolioManager() {
     }
 
     try {
+      let thumbnailPath: string | undefined;
+      const safeName = (formData.name || editingProject?.name || 'untitled').toLowerCase().replace(/\s+/g, '-');
+      const expectedThumbnailPath = `/thumbnails/${safeName}.jpg`;
       // Upload thumbnail if there's a new one
       if (formData.thumbnail) {
         const thumbnailForm = new FormData();
@@ -65,6 +68,8 @@ export default function PortfolioManager() {
         if (!uploadRes.ok) {
           throw new Error('Failed to upload thumbnail');
         }
+        // Always use the expected path
+        thumbnailPath = expectedThumbnailPath;
       }
 
       // Create or update the project
@@ -77,6 +82,7 @@ export default function PortfolioManager() {
           ...(editingProject && { id: editingProject.name }), // Use name as ID for updating
           name: formData.name || editingProject?.name,
           description: formData.description || editingProject?.description,
+          thumbnail: expectedThumbnailPath,
           github: formData.github || editingProject?.links.find(l => l.type === 'github')?.url,
           itch: formData.itch || editingProject?.links.find(l => l.type === 'itch')?.url
         })
@@ -117,6 +123,25 @@ export default function PortfolioManager() {
     document.getElementById('project-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleDelete = async (projectName: string) => {
+    const index = projects.findIndex(p => p.name === projectName);
+    if (index === -1) {
+      alert('Project not found');
+      return;
+    }
+    if (!confirm(`Are you sure you want to delete the project "${projectName}"? This action cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/api/projects?index=${index}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete project');
+      fetchProjects();
+    } catch (error) {
+      alert('Error deleting project');
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <Background3D />
@@ -146,27 +171,37 @@ export default function PortfolioManager() {
                   <p className="text-white/70 mb-4 line-clamp-3">{project.description}</p>
                   <div className="flex gap-3 mb-4">
                     {project.links.map((link) => (
-                      <a
-                        key={link.type}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          link.type === 'github' 
-                            ? 'bg-gray-700/50 hover:bg-gray-700 text-white/90' 
-                            : 'bg-red-500/20 hover:bg-red-500/30 text-red-400'
-                        }`}
-                      >
-                        {link.type === 'github' ? 'GitHub' : 'Itch.io'}
-                      </a>
+                      link.url && (
+                        <a
+                          key={link.type}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            link.type === 'github' 
+                              ? 'bg-gray-700/50 hover:bg-gray-700 text-white/90' 
+                              : 'bg-red-500/20 hover:bg-red-500/30 text-red-400'
+                          }`}
+                        >
+                          {link.type === 'github' ? 'GitHub' : 'Itch.io'}
+                        </a>
+                      )
                     ))}
                   </div>
-                  <button
-                    onClick={() => handleEdit(project)}
-                    className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-lg font-medium transition-colors"
-                  >
-                    Edit Project
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(project)}
+                      className="flex-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Edit Project
+                    </button>
+                    <button
+                      onClick={() => handleDelete(project.name)}
+                      className="flex-1 bg-red-500/20 hover:bg-red-500/40 text-red-400 px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -242,7 +277,7 @@ export default function PortfolioManager() {
               {/* GitHub Link */}
               <div>
                 <label htmlFor="github" className="block text-sm font-medium mb-2 text-white/70">
-                  GitHub URL
+                  GitHub URL (Optional)
                 </label>
                 <input
                   type="url"
@@ -250,7 +285,6 @@ export default function PortfolioManager() {
                   value={formData.github}
                   onChange={(e) => setFormData({ ...formData, github: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-700/50 rounded-lg border border-white/10 text-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                  required={!editingProject}
                   placeholder={editingProject?.links.find(l => l.type === 'github')?.url || 'Enter GitHub URL'}
                 />
               </div>
