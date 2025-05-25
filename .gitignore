@@ -65,3 +65,12 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+.next/cache/webpack/client-development/index.pack.gz
+.next/cache/webpack/client-development/index.pack.gz.old
+.next/cache/webpack/server-development/3.pack.gz
+.next/cache/webpack/server-development/index.pack.gz
+.next/cache/webpack/server-development/index.pack.gz.old
+.next/server/server-reference-manifest.json
+.next/static/chunks/app/layout.js
+.next/static/chunks/webpack.js
+.next/trace
