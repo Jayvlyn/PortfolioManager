@@ -53,6 +53,11 @@ dist/
 coverage/
 .vercel/
 .next/
+.next/cache/
+.next/cache/client-development/
+.next/cache/server-development/
+.next/server/
+.next/static/
 out/
 build/
 .env
