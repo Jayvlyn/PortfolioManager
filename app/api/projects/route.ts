@@ -86,8 +86,8 @@ export async function POST(request: Request) {
     // Create new project
     const safeName = name.toLowerCase().replace(/\s+/g, '-');
     const links: ProjectLink[] = [];
-    if (github) links.push({ type: 'github', url: github });
-    if (itch) links.push({ type: 'itch', url: itch });
+    if (github && github.trim()) links.push({ type: 'github', url: github });
+    if (itch && itch.trim()) links.push({ type: 'itch', url: itch });
     const newProject: Project = {
       name,
       description,
@@ -130,23 +130,17 @@ export async function PUT(request: Request) {
 
     // Update project
     const project = projects[projectIndex];
+    const updatedLinks: ProjectLink[] = [];
+    const githubUrl = github !== undefined ? github : project.links.find((l) => l.type === 'github')?.url || '';
+    const itchUrl = itch !== undefined ? itch : project.links.find((l) => l.type === 'itch')?.url || '';
+    if (githubUrl && githubUrl.trim()) updatedLinks.push({ type: 'github', url: githubUrl });
+    if (itchUrl && itchUrl.trim()) updatedLinks.push({ type: 'itch', url: itchUrl });
     const updatedProject = {
       ...project,
       name: name || project.name,
       description: description || project.description,
       thumbnail: `/thumbnails/${(name || project.name).toLowerCase().replace(/\s+/g, '-')}.png`,
-      links: [
-        { 
-          type: 'github' as const, 
-          url: github || project.links.find((l) => l.type === 'github')?.url || ''
-        },
-        ...(itch || project.links.find((l) => l.type === 'itch')
-          ? [{ 
-              type: 'itch' as const, 
-              url: itch || project.links.find((l) => l.type === 'itch')?.url || ''
-            }]
-          : [])
-      ]
+      links: updatedLinks
     };
 
     // Save updated projects
