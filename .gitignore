@@ -84,3 +84,6 @@ build/
 .next/static/chunks/app/layout.js
 .next/static/chunks/webpack.js
 .next/trace
+.next/cache/webpack/server-development/3.pack.gz
+.next/cache/webpack/server-development/index.pack.gz
+.next/cache/webpack/server-development/index.pack.gz.old
