@@ -147,9 +147,25 @@ export default function PortfolioManager() {
       <Background3D />
       <main className="min-h-screen p-8 relative">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-5xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-            Portfolio Manager
-          </h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+              Portfolio Manager
+            </h1>
+            <button
+              onClick={async () => {
+                const res = await fetch('/api/cleanup-thumbnails', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                  alert(`Deleted ${data.deleted.length} unused thumbnails.`);
+                } else {
+                  alert('Error deleting unused thumbnails: ' + (data.error || 'Unknown error'));
+                }
+              }}
+              className="ml-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition-colors"
+            >
+              Delete Unused Thumbnails
+            </button>
+          </div>
 
           {/* Project List */}
           <div className="mb-12">
